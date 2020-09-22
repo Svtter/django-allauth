@@ -34,6 +34,7 @@ class OAuth2Adapter(object):
     scope_delimiter = ' '
     basic_auth = False
     headers = None
+    grant_type = 'authorization_code'
 
     def __init__(self, request):
         self.request = request
@@ -125,7 +126,7 @@ class OAuth2CallbackView(OAuth2View):
         app = self.adapter.get_provider().get_app(self.request)
         client = self.get_client(request, app)
         try:
-            access_token = client.get_access_token(request.GET['code'])
+            access_token = client.get_access_token(request.GET['code'], self.adapter.grant_type)
             token = self.adapter.parse_token(access_token)
             token.app = app
             login = self.adapter.complete_login(request,
